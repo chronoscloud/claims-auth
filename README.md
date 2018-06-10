@@ -18,7 +18,7 @@ view_users:
 
 ### Sample Configuration - config/initializers/authorizer.rb
 ```ruby
-Rails.application.config.middleware.use ChronosAuth::Authorizer do |config|
+Rails.application.config.middleware.use ClaimsAuth::Authorizer do |config|
 
   # Define how to retrieve the claims from the env that will be available to the
   # matched ACL record.
@@ -31,7 +31,7 @@ Rails.application.config.middleware.use ChronosAuth::Authorizer do |config|
   config.default_rule = :permission_claims_rule
 end
 
-ChronosAuth::Authorizer.add_rule(:permission_claims_rule) do
+ClaimsAuth::Authorizer.add_rule(:permission_claims_rule) do
   
   def authorized?(claims, acl_record)
     # logic to check the claims from the request against the acl_record's permission list
