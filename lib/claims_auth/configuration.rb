@@ -18,8 +18,6 @@ module ClaimsAuth
     end
 
     def validate!
-      puts @default_rule
-      puts @retrieve_claims_proc
       raise MissingConfiguration if (@default_rule.blank? or @retrieve_claims_proc.blank?)
     end
 
