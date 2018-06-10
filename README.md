@@ -1,6 +1,10 @@
 # claims-auth
 Declarative claims-based AuthZ middleware (still under development)
 
+## Usage
+1. create authorizer_acl.yml to define routes/resources that needs to be protected
+2. create initializer/configuration authorizer.rb to implement your authorization logic
+
 ### Sample ACL records - config/authorizer_acl.yml
 An incoming request's http method and path will be checked against this file's entries for a match. You can define any other configuration here as needed (ex. permissions is defined here as this will be used in the custom authorization logic :permission_claims_rule).
 ```ruby
