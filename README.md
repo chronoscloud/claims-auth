@@ -6,20 +6,21 @@ An incoming request's http method and path will be checked against this file's e
 ```ruby
 create_users:
   method: "POST"
-  path: /accounts 
+  path: /users 
   permissions: 
     - USERS::CREATE
 
 view_users:
   method: "GET"
-  path: /accounts/.*  #regex
+  path: /users/.*  #regex
   permissions: 
     - USERS::VIEW
 ```
 
 ### Sample Configuration - config/initializers/authorizer.rb
+In this sample configuration, only the user with the access token 'm123493429304' would be able to successfully send a POST request to /users. Access token '1d1234913em23' bearer could GET to /users/ though.
 ```ruby
-# Sample method/data only
+# Sample method/data only. You would normally fetch permissions via JWT/DB/API calls.
 def user_permissions_from_access_token(access_token)
   access_tokens = {
     "1d1234913em23" => ["USERS::VIEW"],
