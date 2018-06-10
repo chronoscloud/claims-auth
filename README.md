@@ -1,5 +1,5 @@
 # claims-auth
-Declarative claims-based AuthZ middleware
+Declarative claims-based AuthZ middleware (still under development)
 
 ### Sample ACL records - config/authorizer_acl.yml
 ```ruby
