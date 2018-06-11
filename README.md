@@ -50,7 +50,7 @@ end
 
 ClaimsAuth::Authorizer.add_rule(:permission_claims_rule) do
   
-  # Actual authorization login goes here. 
+  # Actual authorization logic goes here. 
   # claims - return value from the config.retrieve_claims block
   # acl_record - matched ACL entry from the authorizer_acl.yml
   def authorized?(claims, acl_record)
