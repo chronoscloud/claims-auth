@@ -1,0 +1,11 @@
+create_users:
+  method: "POST"
+  path: /users
+  permissions:
+    - USERS::CREATE
+
+view_users:
+  method: "GET"
+  path: /users/.*
+  permissions:
+    - USERS::VIEW
