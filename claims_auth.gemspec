@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "railties", ">= 4.2"
+  s.add_dependency "activesupport"
   s.required_ruby_version = ">= 2.4"
 
   s.add_development_dependency "rake", ">= 11.3.0"
