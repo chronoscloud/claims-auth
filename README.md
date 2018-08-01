@@ -1,5 +1,5 @@
-# claims-auth
-Declarative claims-based AuthZ middleware (still under development)
+# chronoscloud-authz
+Declarative AuthZ middleware
 
 ## Usage
 1. create authorizer_acl.yml to define routes/resources that needs to be protected
