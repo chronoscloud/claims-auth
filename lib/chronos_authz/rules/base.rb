@@ -1,4 +1,4 @@
-module ClaimsAuth
+module ChronoscloudAuthz
   module Rules
     class Base
       attr_reader :rule_name
