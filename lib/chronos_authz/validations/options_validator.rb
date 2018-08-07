@@ -26,7 +26,7 @@ module ChronosAuthz
         # Validate required options
         self.class.required_options.each do |required_option|
           option_value = send(required_option)
-          raise ChronosAuthz::Validations::ValidationError.new("Missing option #{required_option} in #{self.class}") if option_value.nil? or option_value.empty?
+          raise ChronosAuthz::Validations::ValidationError.new("Missing option #{required_option} in #{self.class}") if option_value.nil?
         end
 
         # Validate option values

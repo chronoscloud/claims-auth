@@ -1,5 +1,4 @@
-# require 'active_support/core_ext/string/filters'
-# require 'active_support/core_ext/string/filters'
+# require 'action_dispatch/http/request'
 
 module ChronosAuthz
 
@@ -19,28 +18,23 @@ module ChronosAuthz
     def call(env)
       matched_acl_record = @acl.find_record(env["REQUEST_METHOD"], env["REQUEST_PATH"])
       
-      # claims = @configuration.retrieve_claims_proc.call(env)
-      # if matched_acl_record
-      #   rule_name = matched_acl_record.options[:rule] || self.class.configuration.default_rule
-      #   rule = self.class.rules[rule_name]
+      return render_unauthorized if @configuration.strict_mode && matched_acl_record.nil?
 
-      #   raise "Authorizer rule #{rule_name} not found." if rule.nil?
+      request = Rack::Request.new(env)
+      rule_class = matched_acl_record.try(:rule).try(:constantize) || @configuration.default_rule
+      rule_instance = rule_class.new(request, matched_acl_record)    
+      return render_unauthorized if !rule_instance.request_authorized?
 
-      #   if !rule.send("authorized?", claims, matched_acl_record)
-      #     return [403, {'Content-Type' => 'text/plain'}, ["Unauthorized"]]
-      #   end 
-      # end
-
+      RequestStore.store[:chronos_authz_claims] = rule_instance.user_claims
       status, headers, response = @app.call(env)
     end
 
-    # def self.add_rule(rule_name, &block)
-    #   rule ||= Class.new(ChronosAuthz::Rules::Base)
-    #   rule.class_eval(&block) if block_given?
-    #   rule_name = rule_name.to_s.squish.underscore.to_sym
-
-    #   @rules[rule_name] = rule.new(rule_name)
-    # end
-
+    def render_unauthorized
+      if @configuration.unauthorized_page
+        html = ActionView::Base.new.render(file: @configuration.unauthorized_page)
+        return [403, {'Content-Type' => 'text/html'}, [html]]
+      end
+      return [403, {'Content-Type' => 'text/plain'}, ["Unauthorized"]]
+    end
   end
 end

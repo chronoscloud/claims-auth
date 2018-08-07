@@ -1,15 +1,15 @@
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
 
-require "claims_auth/version"
+require "chronos_authz/version"
 
 Gem::Specification.new do |s|
-  s.name        = "claims_auth"
-  s.version     = ClaimsAuth::VERSION
-  s.authors     = ["Jayson Uy"]
-  s.email       = %w(uy.json@gmail.com)
+  s.name        = "chronos_authz"
+  s.version     = ChronosAuthz::VERSION
+  s.authors     = ["ChronosCloud"]
+  s.email       = %w(admin@chronoscloud.com)
   s.homepage    = "https://github.com/uy-json/claims-auth"
-  s.summary     = "Declarative and unobtrusive authorization Rack middleware"
-  s.description = "Lightweight declarative authorization middleware"
+  s.summary     = "Rack middleware for declarative authorization"
+  s.description = "Rack middleware for declarative authorization"
   s.license     = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "railties", ">= 4.2"
+  s.add_dependency "request_store"
   s.add_dependency "activesupport"
   s.required_ruby_version = ">= 2.4"
 
