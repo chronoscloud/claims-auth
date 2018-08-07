@@ -1,3 +1,5 @@
+# require 'chronos_authz/validations/validation_error'
+
 module ChronosAuthz
   module Validations
     module OptionsValidator
