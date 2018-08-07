@@ -3,7 +3,7 @@ $LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require "chronos_authz/version"
 
 Gem::Specification.new do |s|
-  s.name        = "chronos_authz"
+  s.name        = "chronos-authz"
   s.version     = ChronosAuthz::VERSION
   s.authors     = ["ChronosCloud"]
   s.email       = %w(admin@chronoscloud.com)
