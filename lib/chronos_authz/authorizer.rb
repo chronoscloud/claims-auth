@@ -4,7 +4,7 @@ module ChronosAuthz
 
     attr_accessor :configuration, :acl
 
-    def initialize(app, options={})
+    def initialize(app, options = {})
       @app, @configuration = app, ::ChronosAuthz::Configuration.new(options)
 
       yield @configuration if block_given?

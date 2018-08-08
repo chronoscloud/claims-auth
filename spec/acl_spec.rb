@@ -104,15 +104,74 @@ end
 
 
 describe ChronosAuthz::ACL::Record do
-  # describe 'attribute accessors' do
-  #   let(:acl_record) { ClaimsAuth::ACLRecord.new('create_users', {'method'=>'POST', 'path'=>'/users', 'permissions'=>['USERS::CREATE']}) }
+  let(:acl_record_string_method) { ChronosAuthz::ACL::Record.new(name: 'create_users', 
+                                                 http_method: 'post', 
+                                                 path: ' /users  ') }
+  let(:acl_record_array_method) { ChronosAuthz::ACL::Record.new(name: 'create_users', 
+                                                 http_method: ['POST', 'put'], 
+                                                 path: '/users') }
+  let(:acl_record_implicit_all_method) { ChronosAuthz::ACL::Record.new(name: 'create_users', 
+                                                 path: '/users') }
 
-  #   it 'assigns name' do
-  #     expect(acl_record.name).to eql('create_users')
-  #   end
+  describe 'initialization' do
+    context 'when http_method is specified' do
+      context 'with a valid HTTP method' do
+        it 'assigns http_method as a normalized array' do
+          expect(acl_record_string_method.http_method).to_not be_empty
+          expect(acl_record_string_method.http_method).eql?(['POST'])
+        end
+      end
 
-  #   it 'assigns options' do
-  #     expect(acl_record.options).to eql({'method'=>'POST', 'path'=>'/users', 'permissions'=>['USERS::CREATE']})
-  #   end
-  # end
+      context 'with an invalid HTTP method' do
+        it 'raises a validation error' do
+          expect{ ChronosAuthz::ACL::Record.new(name: 'create_users',
+                                                http_method: 'GETS',  
+                                                path: '/users')  }.to raise_error(ChronosAuthz::Validations::ValidationError)
+        end
+      end
+    end
+
+    context 'when path is specified' do
+      it 'assigns a squished http_method' do
+        expect(acl_record_string_method.path).eql?("/users")
+      end
+    end
+  end
+
+  describe '#matches?' do
+    context 'when request_path matches the request_path regex pattern config' do
+      context 'with an array http_method config' do
+        it 'returns true if http_method has a match from the http_method array config' do
+          expect(acl_record_array_method.matches?('POST', '/users')).to be true
+        end
+
+        it 'returns false if http_method doesn\'t have a match from the http_method array config' do
+          expect(acl_record_array_method.matches?('GET', '/accounts')).to be false
+        end
+      end
+
+      context 'with a string http_method config' do
+        it 'returns true if http_method matches the http_method string config' do
+          expect(acl_record_string_method.matches?('POST', '/users')).to be true
+        end
+
+        it 'returns false if http_method doesn\'t match the http_method string config' do
+          expect(acl_record_string_method.matches?('get', '/accounts')).to be false
+        end
+      end
+
+      context 'with a nil http_method config' do
+        it 'returns true' do
+          expect(acl_record_implicit_all_method.matches?('post', '/users')).to be true
+        end
+      end
+    end
+
+    context 'when request_path doesn\'t match the request_path regex pattern config' do
+      it 'returns false' do
+        expect(acl_record_implicit_all_method.matches?('post', '/account/')).to be false
+      end
+    end
+  end
+
 end
