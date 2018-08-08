@@ -1,5 +1,3 @@
-# require 'chronos_authz/validations/options_validator'
-
 module ChronosAuthz
   class Configuration < OpenStruct
     include ChronosAuthz::Validations::OptionsValidator

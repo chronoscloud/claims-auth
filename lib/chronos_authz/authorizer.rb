@@ -1,7 +1,3 @@
-# require 'chronos_authz/configuration'
-# require 'chronos_authz/acl/acl'
-# require 'request_store'
-
 module ChronosAuthz
 
   class Authorizer
@@ -10,10 +6,12 @@ module ChronosAuthz
 
     def initialize(app, options={})
       @app, @configuration = app, ::ChronosAuthz::Configuration.new(options)
-      @acl = ::ChronosAuthz::ACL::ACL.new
 
       yield @configuration if block_given?
       @configuration.validate!
+
+      authorizer_acl = (@configuration.authorizer_acl || "config/authorizer_acl.yml")
+      @acl = ChronosAuthz::ACL.new(authorizer_acl)
     end
 
 
@@ -25,9 +23,10 @@ module ChronosAuthz
       request = Rack::Request.new(env)
       rule_class = matched_acl_record.try(:rule).try(:constantize) || @configuration.default_rule
       rule_instance = rule_class.new(request, matched_acl_record)    
+      
       return render_unauthorized if !rule_instance.request_authorized?
 
-      ::RequestStore.store[:chronos_authz_claims] = rule_instance.user_claims
+      RequestStore.store[:chronos_authz_claims] = rule_instance.user_claims
       status, headers, response = @app.call(env)
     end
 
