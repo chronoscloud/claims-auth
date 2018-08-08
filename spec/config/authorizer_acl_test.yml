@@ -1,17 +1,17 @@
-accounts_page:
-  path: "/accounts/*"
+manage_accounts:
+  path: "/accounts/.*"
   http_method: 
     - GET
-    - post
+    - put
   permissions:
     - AUTH::VIEW_ACCOUNT
     - AUTH::MANAGE_ACCOUNTS
 
-view_users_page:
+create_users:
   path: "/users"
-  http_method: GET
+  http_method: POST
   permissions:
-    - AUTH::VIEW_USERS
+    - AUTH::CREATE_USERS
   # rule: AnotherRule
 
 shipment:

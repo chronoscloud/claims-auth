@@ -9,12 +9,12 @@ module ChronosAuthz
 
       yield @configuration if block_given?
       @configuration.validate!
-      @acl = ChronosAuthz::ACL.new(@configuration.authorizer_acl)
+      @acl = ChronosAuthz::ACL.build_from_yaml(@configuration.acl_yaml)
     end
 
 
     def call(env)
-      matched_acl_record = @acl.find_record(env["REQUEST_METHOD"], env["REQUEST_PATH"])
+      matched_acl_record = @acl.find_match(env["REQUEST_METHOD"], env["REQUEST_PATH"])
       
       return render_unauthorized if @configuration.strict_mode && matched_acl_record.nil?
 

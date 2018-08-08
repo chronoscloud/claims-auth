@@ -1,4 +1,4 @@
-require 'active_support/core_ext/string/filters'
+require 'active_support/core_ext/string'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'ostruct'
 require 'request_store'
