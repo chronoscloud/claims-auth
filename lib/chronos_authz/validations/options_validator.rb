@@ -21,18 +21,19 @@ module ChronosAuthz
       end
 
       def validate!
-        return true if self.class.required_options.nil?
 
-        # Validate required options
-        self.class.required_options.each do |required_option|
-          option_value = send(required_option)
-          raise ChronosAuthz::Validations::ValidationError.new("Missing option #{required_option} in #{self.class}") if option_value.nil?
+        # Required options
+        if !self.class.required_options.nil?
+          self.class.required_options.each do |required_option|
+            option_value = send(required_option) if respond_to?(required_option)
+            raise ChronosAuthz::Validations::ValidationError.new("Missing option #{required_option} in #{self.class}") if option_value.blank?
+          end
         end
 
-        # Validate option values
+        # Check constraint
         if !self.class.predefined_value_map.nil?
           self.class.predefined_value_map.each do |key, value|
-            option_values = send(key)
+            option_values = send(key) 
             check_values = value[:check_values]
 
             if !option_values.is_a? Array
