@@ -2,21 +2,21 @@ module ChronosAuthz
   class ACL
     attr_accessor :yml, :records
       
-    def initialize(yml_path)
-      begin
-        @yml = YAML.load_file(yml_path)
-      rescue StandardError => e
-        raise ChronosAuthz::Validations::ValidationError.new("Unable to parse ACL #{yml_path}: #{e.message}")
-      end
-      
-      @records = build_records(@yml) || []
+    def initialize(authorizer_acl = nil)
+      authorizer_acl ||= "config/authorizer_acl.yml"
+
+      # begin  
+        @yml = YAML.load_file(authorizer_acl)
+        @records = build_records(@yml) || []
+      # rescue StandardError => e
+      #   raise ChronosAuthz::Validations::ValidationError.new("Unable to parse ACL #{authorizer_acl}: #{e.message}")
+      # end
     end
 
     # Populate @records with instances of ACL::Record and validate each instances
     def build_records(records_hash_array)
-      @records = records_hash_array.map do |record_name, record| 
-                   record_hash = { name: record_name }.merge!(record || {})
-                   ChronosAuthz::ACL::Record.new(record_hash).validate!
+      @records = records_hash_array.map do |record_name, record = {}| 
+                   ChronosAuthz::ACL::Record.new(record.merge!(name: record_name)).validate!
                  end
     end
 

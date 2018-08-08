@@ -9,9 +9,7 @@ module ChronosAuthz
 
       yield @configuration if block_given?
       @configuration.validate!
-
-      authorizer_acl = (@configuration.authorizer_acl || "config/authorizer_acl.yml")
-      @acl = ChronosAuthz::ACL.new(authorizer_acl)
+      @acl = ChronosAuthz::ACL.new(@configuration.authorizer_acl)
     end
 
 

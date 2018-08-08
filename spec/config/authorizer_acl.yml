@@ -1,11 +1,18 @@
-create_users:
-  method: "POST"
-  path: /users
+accounts_page:
+  path: "/accounts/*"
+  http_method: 
+    - GET
+    - post
   permissions:
-    - USERS::CREATE
+    - AUTH::VIEW_ACCOUNT
+    - AUTH::MANAGE_ACCOUNTS
 
-view_users:
-  method: "GET"
-  path: /users/.*
+view_users_page:
+  path: "/users"
+  http_method: GET
   permissions:
-    - USERS::VIEW
+    - AUTH::VIEW_USERS
+  # rule: AnotherRule
+
+shipment:
+  path: "/*"
