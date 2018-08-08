@@ -136,6 +136,15 @@ describe ChronosAuthz::ACL::Record do
         expect(acl_record_string_method.path).eql?("/users")
       end
     end
+
+    it 'raises a validation error if name is not specified' do
+      expect{ ChronosAuthz::ACL::Record.new(path: '/users') }.to raise_error(ChronosAuthz::Validations::ValidationError)
+    end
+
+    it 'raises a validation error if path is not specified' do
+      expect{ ChronosAuthz::ACL::Record.new(name: 'create_users') }.to raise_error(ChronosAuthz::Validations::ValidationError)
+    end
+
   end
 
   describe '#matches?' do

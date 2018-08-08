@@ -65,7 +65,7 @@ module ChronosAuthz
       private
 
       def normalize_path(resource_path)
-        return resource_path.to_s.squish
+        return resource_path.squish if !resource_path.nil?
       end
 
       def normalize_http_methods(http_methods)
