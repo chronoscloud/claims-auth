@@ -5,10 +5,10 @@ require "chronos_authz/version"
 Gem::Specification.new do |s|
   s.name        = "chronos_authz"
   s.version     = ChronosAuthz::VERSION
-  s.authors     = ["Jayson Uy", "Marianne Angelie del Mundo", "JR Respino"]
-  s.email       = %w(jayson@chronoscloud.com marianne@chronoscloud.com jr@chronoscloud.com)
+  s.authors     = ["Marianne Angelie del Mundo", "Rodette Pedro", "JR Respino", "Jayson Uy"]
+  s.email       = %w(marianne@chronoscloud.com rodette@chronoscloud.com jr@chronoscloud.com jayson@chronoscloud.com)
   s.homepage    = "https://github.com/chronoscloud/chronoscloud-authz"
-  s.summary     = "A minimal authorization layer"
+  s.summary     = "A minimal and declarative authorization layer"
   s.description = "A declarative authorization Rack middleware that supports custom authorization logic on a per-resource basis"
   s.license     = 'N/A'
 
