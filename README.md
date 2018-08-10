@@ -1,4 +1,4 @@
-# chronos-authz
+# chronos_authz
 A declarative authorization Rack middleware that supports custom authorization logic on a per-resource basis
 
 ## Usage sample for Rails
