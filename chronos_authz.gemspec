@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = ChronosAuthz::VERSION
   s.authors     = ["Marianne Angelie del Mundo", "Rodette Pedro", "JR Respino", "Jayson Uy"]
   s.email       = %w(marianne@chronoscloud.com rodette@chronoscloud.com jr@chronoscloud.com jayson@chronoscloud.com)
-  s.homepage    = "https://github.com/chronoscloud/chronoscloud-authz"
+  s.homepage    = "https://github.com/chronoscloud/chronos-authz"
   s.summary     = "A minimal and declarative authorization layer"
   s.description = "A declarative authorization Rack middleware that supports custom authorization logic on a per-resource basis"
   s.license     = 'N/A'
