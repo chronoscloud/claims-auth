@@ -6,6 +6,10 @@ require 'chronos_authz'
 require 'simplecov'
 require 'simplecov-console'
 
+Dir[File.join(File.dirname(__FILE__), "helpers", "**/*.rb")].each do |f|
+  require f
+end
+
 SimpleCov.formatter = SimpleCov.formatter = SimpleCov::Formatter::Console
 SimpleCov.start
 
@@ -27,10 +31,13 @@ SimpleCov.start
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+RSpec::Expectations.configuration.on_potential_false_positives = :nothing
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
+  # config.include(ChronosAuthz::Spec::Helpers)
+
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods

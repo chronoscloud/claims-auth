@@ -24,7 +24,7 @@ module ChronosAuthz
     # Find matching ACL Record
     def find_match(http_method, request_path)
       record = @records.select{ |record| record.matches?(http_method, request_path) }.first
-      puts "[ChronosAuthz] Found ACL match: #{record.to_s}" if record
+      # puts "[ChronosAuthz] Found ACL match: #{record.to_s}" if record
 
       return record
     end
@@ -53,6 +53,8 @@ module ChronosAuthz
       end
 
       def matches?(http_method, request_path)
+        return false if request_path.nil?
+        
         request_path = normalize_path(request_path)
         path_pattern = /\A#{self.path}\z/
 

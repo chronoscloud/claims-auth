@@ -14,7 +14,7 @@ module ChronosAuthz
 
 
     def call(env)
-      matched_acl_record = @acl.find_match(env["REQUEST_METHOD"], env["REQUEST_PATH"])
+      matched_acl_record = @acl.find_match(env["REQUEST_METHOD"], env["PATH_INFO"])
       
       return render_unauthorized if @configuration.strict_mode && matched_acl_record.nil?
 
@@ -29,9 +29,9 @@ module ChronosAuthz
     end
 
     def render_unauthorized
-      if @configuration.unauthorized_page
-        html = ActionView::Base.new.render(file: @configuration.unauthorized_page)
-        return [403, {'Content-Type' => 'text/html'}, [html]]
+      if @configuration.error_page
+        # html = ActionView::Base.new.render(file: @configuration.error_page)
+        return [403, {'Content-Type' => 'text/html'}, [File.read(@configuration.error_page)]]
       end
       return [403, {'Content-Type' => 'text/plain'}, ["Unauthorized"]]
     end

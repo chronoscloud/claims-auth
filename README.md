@@ -1,5 +1,5 @@
-# chronoscloud-authz
-Declarative AuthZ middleware
+# chronos-authz
+A declarative authorization Rack middleware that supports custom authorization logic on a per-resource basis
 
 ## Usage
 1. create authorizer_acl.yml to define routes/resources that needs to be protected
@@ -47,17 +47,6 @@ Rails.application.config.middleware.use ClaimsAuth::Authorizer do |config|
 
   config.default_rule = :permission_claims_rule
 end
-
-ClaimsAuth::Authorizer.add_rule(:permission_claims_rule) do
-  
-  # Actual authorization logic goes here. 
-  # claims - return value from the config.retrieve_claims block
-  # acl_record - matched ACL entry from the authorizer_acl.yml
-  def authorized?(claims, acl_record)
-    return (acl_record.options[:permissions] - claims[:user_claims]).empty?
-  end
-end
-
 
 
 ```

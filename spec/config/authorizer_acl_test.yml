@@ -12,7 +12,7 @@ create_users:
   http_method: POST
   permissions:
     - AUTH::CREATE_USERS
-  # rule: AnotherRule
+  rule: ChronosAuthz::Spec::Helpers::CustomRule
 
 shipment:
   path: "/*"
