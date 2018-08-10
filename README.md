@@ -1,52 +1,91 @@
 # chronos-authz
 A declarative authorization Rack middleware that supports custom authorization logic on a per-resource basis
 
-## Usage
-1. create authorizer_acl.yml to define routes/resources that needs to be protected
-2. create initializer/configuration authorizer.rb to implement your authorization logic
-
-### Sample ACL records - config/authorizer_acl.yml
-An incoming request's http method and path will be checked against this file's entries for a match. You can define any other configuration here as needed (ex. permissions is defined here as this will be used in the custom authorization logic :permission_claims_rule).
+## Usage sample for Rails
+### 1. Install the gem
 ```ruby
+gem 'chronos_authz'
+```
+
+### 2. Configure the ACL config/my_acl.yml
+An incoming request's http method and path will be checked against the ACL file's records for a match. At minimum, you MUST configure an http_method and path for an ACL record. You can define any other configuration here per resource as needed (ex. permissions is a custom configuration and is defined here as this will be used in the custom authorization rule.
+```ruby
+manage_accounts:
+  path: "/accounts/.*" # regex pattern
+  http_method:  # if array is used, this would work as an OR operation: checking if the incoming http request's method matches ANY of the configured http_method
+    - GET
+    - put
+  permissions:
+    - VIEW_ACCOUNTS
+    - UPDATE_ACCOUNTS
+
 create_users:
-  method: "POST"
-  path: /users 
-  permissions: 
-    - USERS::CREATE
-
-view_users:
-  method: "GET"
-  path: /users/.*  #regex
-  permissions: 
-    - USERS::VIEW
+  path: "/users"
+  http_method: POST
+  permissions:
+    - CREATE_USERS
+    
+update_users:
+  path: "/users/.*"
+  http_method: PUT
+  permissions:
+    - UPDATE_USERS
+    
+  # rule: AnotherCustomRule # override the default rule
 ```
 
-### Sample Configuration - config/initializers/authorizer.rb
-In this sample configuration, only the user with the access token 'm123493429304' would be able to successfully send a POST request to /users. Access token '1d1234913em23' bearer could GET to /users/ though.
+### 2. Create an authorization rule initializers/MyCustomRule.rb
+An authorization rule MUST implement the request_authorized? method. The rule has an access to the ff. instance variables:
+
+1. @request - Rack::Request for the incoming HTTP request
+2. @acl_record - ChronosAuthz::ACL::Record from the ACL yml that matches the incoming request's http method and path. Custom configuration in the ACL yaml will be accessible from this object. ex. @acl_record.permissions
+
 ```ruby
-# Sample method/data only. You would normally fetch permissions via JWT/DB/API calls.
-def user_permissions_from_access_token(access_token)
-  access_tokens = {
-    "1d1234913em23" => ["USERS::VIEW"],
-    "m123493429304" => ["USERS::VIEW","USERS::CREATE","SomeOtherClaimInOtherFormat", "any-format-should-work-claim"]
-  }
-  return (access_tokens[access_token] || [])
-end
-
-# Configuration
-Rails.application.config.middleware.use ClaimsAuth::Authorizer do |config|
-
-  # Define how to retrieve the claims from the Rack env. Whatever this block returns will be available in the 'claims' parameter in
-  # the Rule#authorized? checking
-  config.retrieve_claims do |env|
-    claims = {}
-    claims[:access_token] = env["HTTP_AUTHORIZATION"].gsub("Bearer ",'')
-    claims[:user_claims] =  user_permissions_from_access_token(claims[:access_token]) # sample only. user claims should be retrieved from the DB/via API calls/JWT.
-    claims
+class MyCustomRule < ChronosAuthz::Rule
+  
+  # Must return a boolean to check
+  def request_authorized?
+    (@acl_record.permissions - user_claims).blank?
   end
-
-  config.default_rule = :permission_claims_rule
+  
+  # Optional. Implement how claims are retrieved for a given user. Normally claims could be retrieved using cookies,
+  # JWT decode from the request header, API calls, or a database query. Any value returned here will be available to the ChronosAuthz::User.claims helper module as well.
+  def user_claims
+    # SAMPLE ONLY! In this sample configuration, only the user with the access token '1d1234913em23' would only be able to successfully send a POST request to /users. Access token 'm123493429304' bearer could both create and update a User.
+    access_tokens = {
+      "1d1234913em23" => ["CREATE_USERS"],
+      "m123493429304" => ["CREATE_USERS", "UPDATE_USERS", "SomeOtherClaimInOtherFormat", "any-format-should-work-claim"]
+    }
+    
+    access_token_from_request = < retrieve access token from @request object >
+    return (access_tokens[access_token_from_request] || [])
+  end
 end
-
-
 ```
+
+### 4. Use the middleware
+```ruby
+Rails.application.config.middleware.use ChronosAuthz::Authorizer do |config|
+  # Required. Default authorization rule to use
+  config.default_rule = MyCustomRule
+  
+  # Optional. Default is false. If set to true, the ACL is treated as a whitelist of resource paths: authorization would return a 403 error if no ACL Record has been configured for a given resource path. If set to false, authorization check will only be done to the resources configured in the ACL.
+  config.strict_mode = true
+  
+  # Optional. Configure the error page to render when authorization fails 
+  config.error_page = "public/403.html"
+  
+  # Optional. Default behavior will look for 'config/authorizer_acl.yml'. Configure which ACL yml to use
+  config.acl_yaml = "config/my_acl.yml"
+end
+```
+
+## Helpers
+Include the helper module ChronosAuthz::User as needed to have access to the current user's claims via the .claims method.
+example:
+```ruby
+class User < ActiveRecord
+  include ChronosAuthz::User
+end
+```
+
