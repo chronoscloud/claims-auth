@@ -90,3 +90,19 @@ class User < ActiveRecord
 end
 ```
 
+With this helper included in your User model and assuming you are using Devise or any other AuthN solution, you may do the ff.:
+```ruby
+current_user.claims
+=> ["CREATE_USERS"]
+```
+
+If the return value of user_claims method in your implementation is a hash:
+```ruby
+current_user.claims
+=> {permissions: ["CREATE_USERS"], email: "someemail@yourdomain.com"}
+
+current_user.claim[:email]
+=> someemail@yourdomain.com
+```
+
+
