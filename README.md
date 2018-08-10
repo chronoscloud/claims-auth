@@ -13,7 +13,7 @@ An incoming request's http method and path will be checked against the ACL file'
 ```ruby
 manage_accounts:
   path: "/accounts/.*" # regex pattern
-  http_method:  # if array is used, this would work as an OR operation: checking if the incoming http request's method matches ANY of the configured http_method
+  http_method:         # if array is used, this would work as an OR operation: checking if the incoming http request's method matches ANY of the configured http_method
     - GET
     - put
   permissions:
@@ -31,8 +31,7 @@ update_users:
   http_method: PUT
   permissions:
     - UPDATE_USERS
-    
-  # rule: AnotherCustomRule # override the default rule
+  # rule: AnotherCustomRule # Use a different rule for this ACL record
 ```
 
 ### 2. Create an authorization rule initializers/MyCustomRule.rb
@@ -58,7 +57,7 @@ class MyCustomRule < ChronosAuthz::Rule
       "m123493429304" => ["CREATE_USERS", "UPDATE_USERS", "SomeOtherClaimInOtherFormat", "any-format-should-work-claim"]
     }
     
-    access_token_from_request = < retrieve access token from @request object >
+    access_token_from_request = @request.get_header("HTTP_AUTHORIZATION").gsub("Bearer ")
     return (access_tokens[access_token_from_request] || [])
   end
 end
