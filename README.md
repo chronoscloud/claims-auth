@@ -8,8 +8,8 @@ gem 'chronos_authz'
 ```
 
 ### 2. Configure the ACL config/my_acl.yml
-    An incoming request's http method and path will be checked against the ACL file's records for a match. At minimum, you MUST configure the path of the resource in an ACL record and should configure the http_method. If the http_method isn't configured, http method check during record matching will not be done.
-    You can define any other configuration here per resource as needed (ex. permissions is a custom configuration and is defined here as this will be used in the custom authorization rule.
+An incoming request's http method and path will be checked against the ACL file's records for a match. At minimum, you MUST configure the path of the resource in an ACL record and should configure the http_method. If the http_method isn't configured, http method check during record matching will not be done. You can define any other configuration here per resource as needed (ex. permissions is a custom configuration and is defined here as this will be used in the custom authorization rule.
+    
 ```ruby
 manage_accounts:
   path: "/accounts/.*" # regex pattern
