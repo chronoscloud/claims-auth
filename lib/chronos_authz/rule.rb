@@ -15,6 +15,14 @@ module ChronosAuthz
     def request_authorized?
       false
     end
-  
+    
+    def json_error
+      nil
+    end
+
+    def html_error
+      nil
+    end
+    
   end
 end
