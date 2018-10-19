@@ -60,6 +60,11 @@ class MyCustomRule < ChronosAuthz::Rule
     access_token_from_request = @request.get_header("HTTP_AUTHORIZATION").gsub("Bearer ")
     return (access_tokens[access_token_from_request] || [])
   end
+  
+  # Optional. Error response when authorization fails
+  def json_error
+    return {error: "User not authorized."}
+  end
 end
 ```
 
@@ -72,7 +77,7 @@ Rails.application.config.middleware.use ChronosAuthz::Authorizer do |config|
   # Optional. Default is false. If set to true, the ACL is treated as a whitelist of resource paths: authorization would return a 403 error if no ACL Record has been configured for a given resource path. If set to false, authorization check will only be done to the resources configured in the ACL.
   config.strict_mode = true
   
-  # Optional. Configure the error page to render when authorization fails 
+  # Optional. Configure the default error page to render when authorization fails 
   config.error_page = "public/403.html"
   
   # Optional. Default behavior will look for 'config/authorizer_acl.yml'. Configure which ACL yml to use
