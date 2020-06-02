@@ -18,11 +18,11 @@ module ChronosAuthz
       
       return render_unauthorized if @configuration.strict_mode && matched_acl_record.nil?
 
-      if !matched_acl_record.nil?
+      unless matched_acl_record.nil?
         request = Rack::Request.new(env)
         rule_class = matched_acl_record.try(:rule).try(:constantize) || @configuration.default_rule
         @rule_instance = rule_class.new(request, matched_acl_record)    
-        
+
         return render_unauthorized if !@rule_instance.request_authorized?
 
         RequestStore.store[:chronos_authz_claims] = @rule_instance.user_claims
@@ -32,6 +32,9 @@ module ChronosAuthz
     end
 
     def render_unauthorized
+      default_response = [403, {'Content-Type' => 'text/plain'}, ["Unauthorized"]]
+      return default_response if @rule_instance.blank?
+      
       if !@rule_instance.json_error.nil?
         return [403, {'Content-Type' => 'application/json'}, [@rule_instance.json_error.to_json]]
       elsif !@rule_instance.html_error.nil?
@@ -40,7 +43,8 @@ module ChronosAuthz
         # html = ActionView::Base.new.render(file: @configuration.error_page)
         return [403, {'Content-Type' => 'text/html'}, [File.read(@configuration.error_page)]]
       end
-      return [403, {'Content-Type' => 'text/plain'}, ["Unauthorized"]]
+
+      return default_response
     end
   end
 end
